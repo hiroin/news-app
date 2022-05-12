@@ -1,14 +1,15 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+import { useState } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  FlatList,
+  SafeAreaViewBase,
+  SafeAreaView,
+} from 'react-native';
+import ListItem from './components/ListItems';
+import articles from './dummies/articles.json';
 
 const styles = StyleSheet.create({
   container: {
@@ -17,4 +18,52 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  itemContainer: {
+    height: 100,
+    width: '100%',
+    borderColor: 'gray',
+    borderWidth: 1,
+    flexDirection: 'row',
+  },
+  leftContainer: {
+    width: 100,
+  },
+  rightContainer: {
+    flex: 1,
+    padding: 10,
+    justifyContent: 'space-between',
+  },
+  text: {
+    fontSize: 16,
+  },
+  subText: {
+    fontSize: 12,
+    color: 'gray',
+  },
 });
+
+type Article = {
+  author: string;
+  title: string;
+  urlToImage: string;
+};
+
+export default function App() {
+  const renderItem = ({ item }: { item: Article }) => (
+    <ListItem
+      author={item.author}
+      title={item.title}
+      imageUrl={item.urlToImage}
+    />
+  );
+
+  return (
+    <SafeAreaView>
+      <FlatList
+        data={articles}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+      />
+    </SafeAreaView>
+  );
+}
