@@ -45,10 +45,11 @@ const styles = StyleSheet.create({
   },
 });
 
-type Article = {
+export type Article = {
   author: string;
   title: string;
   urlToImage: string;
+  url: string;
 };
 
 type ArticlesFetchNewsAPI = {
@@ -96,7 +97,7 @@ export default function HomeScreen({ navigation }: Props) {
       title={item.title}
       imageUrl={item.urlToImage}
       onPress={() => {
-        navigation.navigate('Article');
+        navigation.navigate('Article', { article: item });
       }}
     />
   );
