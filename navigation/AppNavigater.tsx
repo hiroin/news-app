@@ -1,6 +1,9 @@
 import React, { ComponentProps } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {
+  createStackNavigator,
+  StackScreenProps,
+} from '@react-navigation/stack';
 import HomeScreen, { Article } from '../screens/HomeScreen';
 import ArticleScreen from '../screens/ArticleScreen';
 import ClipScreen from '../screens/ClipScreen';
@@ -38,26 +41,30 @@ const ClipStack = () => {
 };
 
 export type GlyphNames = ComponentProps<typeof FontAwesome>['name'];
+import { RouteProp } from '@react-navigation/core';
 
-const screenOption = ({ route }: any) => {
-  tabBarIcon: ({ color, size }: any) => {
+const screenOption = ({
+  route,
+}: {
+  route: RouteProp<Record<string, object | undefined>, string>;
+}) => ({
+  tabBarIcon: ({ color, size }: { size: number; color: string }) => {
     let iconName: GlyphNames;
-
     if (route.name === 'Home') {
       iconName = 'home';
-    } else if (route.name === 'Settings') {
+    } else if (route.name === 'Clip') {
       iconName = 'bookmark';
     } else {
       return;
     }
-    return <FontAwesome name={iconName} size={24} color="black" />;
-  };
-};
+    return <FontAwesome name={iconName} size={size} color={color} />;
+  },
+});
 
 const AppNavigaotor = () => {
   return (
     <NavigationContainer>
-      <Tab.Navigator>
+      <Tab.Navigator screenOptions={screenOption}>
         <Tab.Screen name="Home" component={HomeStack} />
         <Tab.Screen name="Clip" component={ClipStack} />
       </Tab.Navigator>
