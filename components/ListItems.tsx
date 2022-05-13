@@ -1,5 +1,6 @@
 import { useState, VFC } from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const styles = StyleSheet.create({
   itemContainer: {
@@ -30,18 +31,21 @@ type Props = {
   author: string;
   imageUrl: string;
   title: string;
+  onPress: () => void;
 };
 
-const ListItem: VFC<Props> = ({ author, imageUrl, title }) => {
+const ListItem: VFC<Props> = ({ author, imageUrl, title, onPress }) => {
   return (
-    <View style={styles.itemContainer}>
+    <TouchableOpacity style={styles.itemContainer} onPress={onPress}>
       <View style={styles.leftContainer}>
-        <Image
-          style={{ width: 100, height: 100 }}
-          source={{
-            uri: imageUrl,
-          }}
-        />
+        {!!imageUrl && (
+          <Image
+            style={{ width: 100, height: 100 }}
+            source={{
+              uri: imageUrl,
+            }}
+          />
+        )}
       </View>
       <View style={styles.rightContainer}>
         <Text style={styles.text} numberOfLines={3}>
@@ -49,7 +53,7 @@ const ListItem: VFC<Props> = ({ author, imageUrl, title }) => {
         </Text>
         <Text style={styles.subText}>{author}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
