@@ -4,17 +4,11 @@ import {
   createStackNavigator,
   StackScreenProps,
 } from '@react-navigation/stack';
-import HomeScreen, { Article } from '../screens/HomeScreen';
+import HomeScreen from '../screens/HomeScreen';
 import ArticleScreen from '../screens/ArticleScreen';
 import ClipScreen from '../screens/ClipScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesome } from '@expo/vector-icons';
-
-export type RootStackParamList = {
-  Home: undefined;
-  Article: { article: Article };
-  Clip: undefined;
-};
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -42,6 +36,8 @@ const ClipStack = () => {
 
 export type GlyphNames = ComponentProps<typeof FontAwesome>['name'];
 import { RouteProp } from '@react-navigation/core';
+import { Article } from '../types/Article';
+import { RootStackParamList } from '../types/RootStackParamList';
 
 const screenOption = ({
   route,

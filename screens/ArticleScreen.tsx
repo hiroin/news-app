@@ -3,9 +3,9 @@ import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import WebView from 'react-native-webview';
 import { RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../navigation/AppNavigater';
 import { useDispatch } from 'react-redux';
 import { addClip, deleteClip } from '../store/actions/user';
+import { RootStackParamList } from '../types/RootStackParamList';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'Article'>;
 type Props = {

@@ -11,6 +11,7 @@ import {
 import ListItem from '../components/ListItems';
 import Constants from 'expo-constants';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const URL = `https://newsapi.org/v2/top-headlines?country=jp&apiKey=${Constants.manifest?.extra?.newsApiKey}`;
 
@@ -45,13 +46,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export type Article = {
-  author: string;
-  title: string;
-  urlToImage: string;
-  url: string;
-};
-
 type ArticlesFetchNewsAPI = {
   data: {
     articles: {
@@ -65,7 +59,10 @@ type ArticlesFetchNewsAPI = {
 };
 
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../navigation/AppNavigater';
+import { RootStackParamList } from '../types/RootStackParamList';
+import { Article } from '../types/Article';
+import { User } from '../types/User';
+import { State } from '../types/State';
 
 type ProfileScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -77,19 +74,8 @@ type Props = {
 };
 
 export default function ClipScreen({ navigation }: Props) {
-  const [articles, setArticles] = useState<Article[]>([]);
-  useEffect(() => {
-    fetchArticles();
-  }, []);
-
-  const fetchArticles = async () => {
-    try {
-      const response: ArticlesFetchNewsAPI = await axios.get(URL);
-      setArticles(response.data.articles);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const user = useSelector((state: State) => state.user) as User;
+  const { clips } = user;
 
   const renderItem = ({ item }: { item: Article }) => (
     <ListItem
@@ -105,7 +91,7 @@ export default function ClipScreen({ navigation }: Props) {
   return (
     <SafeAreaView>
       <FlatList
-        data={articles}
+        data={clips}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
       />

@@ -45,13 +45,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export type Article = {
-  author: string;
-  title: string;
-  urlToImage: string;
-  url: string;
-};
-
 type ArticlesFetchNewsAPI = {
   data: {
     articles: {
@@ -65,7 +58,8 @@ type ArticlesFetchNewsAPI = {
 };
 
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../navigation/AppNavigater';
+import { Article } from '../types/Article';
+import { RootStackParamList } from '../types/RootStackParamList';
 
 type ProfileScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
