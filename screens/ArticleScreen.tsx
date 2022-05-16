@@ -1,11 +1,13 @@
 import { VFC } from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import WebView from 'react-native-webview';
 import { RouteProp } from '@react-navigation/native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addClip, deleteClip } from '../store/actions/user';
 import { RootStackParamList } from '../types/RootStackParamList';
+import { State } from '../types/State';
+import { ClipButton } from '../components/ClipButton';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'Article'>;
 type Props = {
@@ -15,25 +17,29 @@ type Props = {
 const ArticleScreen: VFC<Props> = ({ route }: Props) => {
   const { article } = route.params;
   const dispatch = useDispatch();
+  const user = useSelector((state: State) => state.user);
+  const { clips } = user;
+  const isClipped = () => {
+    return clips.some((clip) => clip.url === article.url);
+  };
+
+  const toggleClip = () => {
+    if (isClipped()) {
+      dispatch(deleteClip({ clip: article }));
+    } else {
+      dispatch(addClip({ clip: article }));
+    }
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <TouchableOpacity
-        onPress={() => {
-          dispatch(addClip({ clip: article }));
-        }}
-      >
-        <Text style={{ margin: 10, fontSize: 30 }}>ADD_CLIP</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => {
-          dispatch(deleteClip({ clip: article }));
-        }}
-      >
-        <Text style={{ margin: 10, fontSize: 30 }}>DELETE_CLIP</Text>
-      </TouchableOpacity>
+    // SafeAreaViewを適用すると上部に空白があくのでViewに置換した
+    // SafeAreaViewじゃなくても表示に問題なさそう
+    // <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
+      <ClipButton onPress={toggleClip} enabled={isClipped()} />
       <WebView source={{ uri: article.url }} />
-    </SafeAreaView>
+    </View>
+    // </SafeAreaView>
   );
 };
 export default ArticleScreen;
