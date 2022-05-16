@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,6 +7,7 @@ import {
   FlatList,
   SafeAreaViewBase,
   SafeAreaView,
+  RefreshControl,
 } from 'react-native';
 import ListItem from '../components/ListItems';
 import Constants from 'expo-constants';
@@ -74,6 +75,7 @@ type Props = {
 export default function HomeScreen({ navigation }: Props) {
   const [loading, setLoading] = useState(true);
   const [articles, setArticles] = useState<Article[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
   // 画面の表示と関係ない変数はuseRefでもっておくと余計な再レンダリングをせずにすむ
   // articlesが変更された場合にのみ再レンダリングするようにuseRefを使った
   // useStateは非同期に反映される。useRefは即時反映される。
@@ -81,7 +83,11 @@ export default function HomeScreen({ navigation }: Props) {
   const fetchAllRef = useRef(false);
 
   useEffect(() => {
+    setLoading(true);
     fetchArticles(1);
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
   }, []);
 
   const fetchArticles = async (page: number) => {
@@ -100,7 +106,6 @@ export default function HomeScreen({ navigation }: Props) {
     } catch (error) {
       console.log(error);
     }
-    setLoading(false);
   };
 
   const onEndReached = () => {
@@ -120,6 +125,15 @@ export default function HomeScreen({ navigation }: Props) {
     />
   );
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    setArticles([]);
+    pageRef.current = 1;
+    fetchAllRef.current = false;
+    await fetchArticles(1);
+    setRefreshing(false);
+  }, []);
+
   return (
     <SafeAreaView>
       <FlatList
@@ -127,6 +141,9 @@ export default function HomeScreen({ navigation }: Props) {
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
         onEndReached={onEndReached}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
       {loading && <Loading />}
     </SafeAreaView>
