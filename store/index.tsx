@@ -3,7 +3,6 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import userReducer from './reducers/user';
 import { persistReducer, persistStore } from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import strage from 'redux-persist/lib/storage';
 
 const rootReducer = combineReducers({
   user: userReducer,

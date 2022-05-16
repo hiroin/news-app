@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -60,6 +60,7 @@ type ArticlesFetchNewsAPI = {
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Article } from '../types/Article';
 import { RootStackParamList } from '../types/RootStackParamList';
+import Loading from '../components/Loading';
 
 type ProfileScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -71,18 +72,41 @@ type Props = {
 };
 
 export default function HomeScreen({ navigation }: Props) {
+  const [loading, setLoading] = useState(true);
   const [articles, setArticles] = useState<Article[]>([]);
+  // 画面の表示と関係ない変数はuseRefでもっておくと余計な再レンダリングをせずにすむ
+  // articlesが変更された場合にのみ再レンダリングするようにuseRefを使った
+  // useStateは非同期に反映される。useRefは即時反映される。
+  const pageRef = useRef(1);
+  const fetchAllRef = useRef(false);
+
   useEffect(() => {
-    fetchArticles();
+    fetchArticles(1);
   }, []);
 
-  const fetchArticles = async () => {
+  const fetchArticles = async (page: number) => {
     try {
-      const response: ArticlesFetchNewsAPI = await axios.get(URL);
-      setArticles(response.data.articles);
+      const response: ArticlesFetchNewsAPI = await axios.get(
+        `${URL}&pageSize=10&page=${page}`,
+      );
+      if (response.data.articles.length > 0) {
+        setArticles((prevArticles) => [
+          ...prevArticles,
+          ...response.data.articles,
+        ]);
+      } else {
+        fetchAllRef.current = true;
+      }
     } catch (error) {
       console.log(error);
     }
+    setLoading(false);
+  };
+
+  const onEndReached = () => {
+    if (fetchAllRef.current) return;
+    pageRef.current = pageRef.current + 1;
+    fetchArticles(pageRef.current);
   };
 
   const renderItem = ({ item }: { item: Article }) => (
@@ -102,7 +126,9 @@ export default function HomeScreen({ navigation }: Props) {
         data={articles}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
+        onEndReached={onEndReached}
       />
+      {loading && <Loading />}
     </SafeAreaView>
   );
 }

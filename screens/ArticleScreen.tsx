@@ -8,6 +8,7 @@ import { addClip, deleteClip } from '../store/actions/user';
 import { RootStackParamList } from '../types/RootStackParamList';
 import { State } from '../types/State';
 import { ClipButton } from '../components/ClipButton';
+import Loading from '../components/Loading';
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'Article'>;
 type Props = {
@@ -37,7 +38,11 @@ const ArticleScreen: VFC<Props> = ({ route }: Props) => {
     // <SafeAreaView style={styles.container}>
     <View style={styles.container}>
       <ClipButton onPress={toggleClip} enabled={isClipped()} />
-      <WebView source={{ uri: article.url }} />
+      <WebView
+        source={{ uri: article.url }}
+        startInLoadingState={true}
+        renderLoading={() => <Loading />}
+      />
     </View>
     // </SafeAreaView>
   );
